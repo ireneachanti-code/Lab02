@@ -177,13 +177,17 @@ if not df.empty and is_class_data_format(df):
             cls_series = pd.to_numeric(df[cls_col], errors="coerce").fillna(0)
             prof_series = pd.to_numeric(df[prof_col], errors="coerce").fillna(0)
 
-            num_entries = st.slider(
-                "Select how many data submissions you would like to include "
-                "(e.g., if 4, chart includes last 4 submissions).",
-                min_value=1,
-                max_value=len(df),
-                value=min(4, len(df))
-            )
+            if len(df) > 1:
+                num_entries = st.slider(
+                    "Select how many data submissions you would like to include "
+                    "(e.g., if 4, chart includes last 4 submissions).",
+                    min_value=1,
+                    max_value=len(df),
+                    value=min(4, len(df))
+                )
+            else:
+                num_entries = 1  # Default to 1 when only one row
+                st.info("Only one submission found — showing all available data.")
 
             cls_series_recent = cls_series.tail(num_entries)
             prof_series_recent = prof_series.tail(num_entries)
@@ -303,5 +307,6 @@ if os.path.exists("data.csv"):
         st.error(f"Error reading data.csv: {e}")
 else:
     st.warning("No data.csv file found.")
+
 
 
